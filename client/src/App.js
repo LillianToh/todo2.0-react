@@ -52,6 +52,7 @@ class App extends React.Component {
       .then(res => res.json())
       .then(data => {
         console.log(data.insertId);
+        console.log(data);
         const newTask = [
           {
             id: data.insertId,
@@ -80,39 +81,41 @@ class App extends React.Component {
     // upon success, update tasks
     // upon failure, show error message
 
-    // fetch("/todos/:todo_id", {
-    //   method: "PUT",
-    //   headers: {
-    //     "Content-Type": "application/json"
-    //   },
-    //   body: JSON.stringify({
-    //     id: identity,
-    //     text: e.target.value,
-    //     complete: this.state.complete
-    //   })
-    // })
-    // .then(res => res.json())
-    // .then(json => {
-    //   this.setState({
-    //     tasks: json
-    //   });
-    // })
-    // .catch(error => {
-    //   console.log(error);
-    // });
-
-    const tasksIndex = this.state.tasks.findIndex(t => t.id === identity);
-
-    const changedTask = { ...this.state.tasks[tasksIndex] }; //points to the copy of the task that you are wanting to change
-    changedTask.text = e.target.value;
-
-    const changedTasks = [...this.state.tasks]; //create a copy of the task lists that is unchanged
-    changedTasks[tasksIndex] = changedTask; //change happens here
-
-    this.setState({
-      tasks: changedTasks
+    // Updates the requirements from the server side
+    fetch("api/todos/" + identity, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        id: identity,
+        text: e.target.value,
+        complete: this.state.complete
+      })
+    }).then(() => {
+      fetch("/api/todos/")
+        .then(response => response.json())
+        .then(data => {
+          this.setState({
+            tasks: data
+          });
+        })
+        .catch(e => console.error(e));
     });
-    console.log(this.state.tasks);
+
+    // // Updating the data from the browser side not directly influenced by the server / fetch
+    // const tasksIndex = this.state.tasks.findIndex(t => t.id === identity);
+
+    // const changedTask = { ...this.state.tasks[tasksIndex] }; //points to the copy of the task that you are wanting to change
+    // changedTask.text = e.target.value;
+
+    // const changedTasks = [...this.state.tasks]; //create a copy of the task lists that is unchanged
+    // changedTasks[tasksIndex] = changedTask; //change happens here
+
+    // this.setState({
+    //   tasks: changedTasks
+    // });
+    // console.log(this.state.tasks);
   }
 
   deleteTask(e, i) {
@@ -125,20 +128,16 @@ class App extends React.Component {
       headers: {
         "Content-Type": "application/json"
       }
-    })
-      .then(res => console.log(res))
-      .then(data => console.log(data));
-    // .then(res => res.json())
-    // .then(data => {
-    //   this.setState({
-    //     tasks: data
-    //   });
-    // })
-    // .catch(error => {
-    //   console.log(error);
-    // });
-
-    // const deletedTask = {...this.state.tasks}
+    }).then(() => {
+      fetch("/api/todos/")
+        .then(response => response.json())
+        .then(data => {
+          this.setState({
+            tasks: data
+          });
+        })
+        .catch(e => console.error(e));
+    });
   }
 
   render() {
