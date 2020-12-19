@@ -11,6 +11,7 @@ class App extends React.Component {
     };
     this.addTask = this.addTask.bind(this);
     this.updateTask = this.updateTask.bind(this);
+    this.deleteTask = this.deleteTask.bind(this);
   }
 
   updateInput(e) {
@@ -114,10 +115,30 @@ class App extends React.Component {
     console.log(this.state.tasks);
   }
 
-  deleteTask(i) {
+  deleteTask(e, i) {
     // delete task from database
     // upon success, update tasks
     // upon failure, show error message
+    console.log(i);
+    fetch("/api/todos/" + i, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(res => console.log(res))
+      .then(data => console.log(data));
+    // .then(res => res.json())
+    // .then(data => {
+    //   this.setState({
+    //     tasks: data
+    //   });
+    // })
+    // .catch(error => {
+    //   console.log(error);
+    // });
+
+    // const deletedTask = {...this.state.tasks}
   }
 
   render() {
@@ -156,6 +177,7 @@ class App extends React.Component {
                     id={k.id}
                     onChange={e => this.updateTask(e, k.id)}
                   />
+                  <button onClick={e => this.deleteTask(e, k.id)}>x</button>
                 </div>
               );
             })}

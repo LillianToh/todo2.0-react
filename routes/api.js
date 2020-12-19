@@ -63,7 +63,7 @@ router.delete("/todos/:todo_id", (req, res) => {
   const deleteId = req.params["todo_id"];
   db(`DELETE FROM items WHERE id = ${JSON.stringify(deleteId)};`)
     .then(results => {
-      res.send(results.data);
+      res.send(results);
     })
     .catch(err => res.status(500).send(err));
 });
