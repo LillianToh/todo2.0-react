@@ -25,19 +25,19 @@ class App extends React.Component {
       .then(res => res.json())
       .then(json => {
         // upon success, update tasks
-        //this.updateTask(newTaskFromDatabase)
         console.log(json);
-        this.updateTask(json);
+        this.setState({
+          tasks: json
+        });
       })
       .catch(error => {
-        // upon failure, show error message
-        // console.error("Failed to update tasks", error.text());
+        console.log(error);
       });
   }
 
   addTask(e) {
     e.preventDefault();
-    console.log(this.state.input, this.state.complete, "where we start");
+    //console.log(this.state.input, this.state.complete, "where we start");
     fetch("/api/todos", {
       method: "POST",
       headers: {
@@ -64,7 +64,6 @@ class App extends React.Component {
           // your new item that you are adding, should be an object like other objects that are already in tasks.
           // { id: idfromdb, text : taskString, complete : 0or1} .. check the constructor.
           // your new item should have the same format.
-
           tasks: [...this.state.tasks, ...newTask]
         });
         console.log(this.state.tasks);
@@ -72,17 +71,47 @@ class App extends React.Component {
       .catch(error => {
         console.log(error);
       });
-    //  Continue fetch request here
   }
 
-  updateTask(i) {
-    //update this.state.task.push(whateveryougetinjson)
+  updateTask(e, identity) {
+    // update this.state.task.push(whateveryougetinjson)
     // update task from database
     // upon success, update tasks
     // upon failure, show error message
+
+    // fetch("/todos/:todo_id", {
+    //   method: "PUT",
+    //   headers: {
+    //     "Content-Type": "application/json"
+    //   },
+    //   body: JSON.stringify({
+    //     id: identity,
+    //     text: e.target.value,
+    //     complete: this.state.complete
+    //   })
+    // })
+    // .then(res => res.json())
+    // .then(json => {
+    //   this.setState({
+    //     tasks: json
+    //   });
+    // })
+    // .catch(error => {
+    //   console.log(error);
+    // });
+
+    const tasksIndex = this.state.tasks.findIndex(t => t.id === identity);
+
+    const changedTask = { ...this.state.tasks[tasksIndex] }; //points to the copy of the task that you are wanting to change
+    changedTask.text = e.target.value;
+
+    const changedTasks = [...this.state.tasks]; //create a copy of the task lists that is unchanged
+    changedTasks[tasksIndex] = changedTask; //change happens here
+
     this.setState({
-      tasks: i
+      tasks: changedTasks
     });
+    console.log(this.state.tasks);
   }
 
   deleteTask(i) {
@@ -105,17 +134,33 @@ class App extends React.Component {
 
         <div>Number of Tasks Now: {this.state.tasks.length}</div>
 
-        <ol>
+        {/* <ol>
           {this.state.tasks.map(k => {
             return (
               <li key={k.id} onChange={e => this.updateTask(e)}>
                 {k.text}
               </li>
             );
-          })}
-        </ol>
-        {/* <div>All Tasks: {allTasks.map((e) => <div>{e.text}</div>);}</div> */}
-        {/* <div>{this.state.tasks}</div> iterate the id and print out text*/}
+          })
+          }
+        </ol> */}
+
+        <div>
+          <div>
+            {this.state.tasks.map(k => {
+              return (
+                <div key={k.id}>
+                  <input
+                    type="text"
+                    value={k.text}
+                    id={k.id}
+                    onChange={e => this.updateTask(e, k.id)}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     );
   }

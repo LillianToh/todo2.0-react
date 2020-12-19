@@ -45,7 +45,11 @@ router.put("/todos/:todo_id", (req, res) => {
   // If the query is successfull you should send back the full list of items
   const newId = req.params["todo_id"];
   const newText = req.body.text;
-  db(`UPDATE items SET text = ${newText} WHERE id = ${newId};`)
+  db(
+    `UPDATE items SET text = ${JSON.stringify(
+      newText
+    )} WHERE id = ${JSON.stringify(newId)};`
+  )
     .then(results => {
       res.send(results.data);
       console.log(results.data);
@@ -56,8 +60,12 @@ router.put("/todos/:todo_id", (req, res) => {
 
 router.delete("/todos/:todo_id", (req, res) => {
   // URL params are available in req.params
-  db("DELETE FROM items WHERE id = parseInt(req.params.id)");
-  return parseInt(e.id) !== parseInt(req.params.id);
+  const deleteId = req.params["todo_id"];
+  db(`DELETE FROM items WHERE id = ${JSON.stringify(deleteId)};`)
+    .then(results => {
+      res.send(results.data);
+    })
+    .catch(err => res.status(500).send(err));
 });
 
 module.exports = router;
