@@ -22,16 +22,18 @@ router.post("/todos", (req, res) => {
   // The request's body is available in req.body
   // If the query is successfull you should send back the full list of items
   //console.log(req.body)
+  // ACTUALLY WHEN AN INSERT IS SUCCESSFUL (YOU CAN CHECK THIS IN POSTMAN ALSO) THE RETURNED VALUE IS SIMPLY []
+  // WHERE IS THE ID ?
   const newText = req.body.text;
   const newComplete = req.body.complete;
   //db("INSERT INTO items(text,complete) VALUES('',0);")
   db(
     `INSERT INTO items(text,complete) VALUES(${JSON.stringify(
       newText
-    )}, ${newComplete});`
+    )}, ${JSON.stringify(newComplete)});`
   )
     .then(results => {
-      res.send(results.data);
+      res.send(results);
       res.status(200).send("item added in todo");
     })
     .catch(err => res.status(500).send(err));
@@ -43,7 +45,7 @@ router.put("/todos/:todo_id", (req, res) => {
   // If the query is successfull you should send back the full list of items
   const newId = req.params["todo_id"];
   const newText = req.body.text;
-  db(`UPDATE items SET text = ${JSON.stringify(newText)} WHERE id = ${newId};`)
+  db(`UPDATE items SET text = ${newText} WHERE id = ${newId};`)
     .then(results => {
       res.send(results.data);
       console.log(results.data);

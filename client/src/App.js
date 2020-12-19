@@ -6,7 +6,8 @@ class App extends React.Component {
     super(props);
     this.state = {
       input: "",
-      tasks: []
+      tasks: [],
+      complete: 0
     };
     this.addTask = this.addTask.bind(this);
     this.updateTask = this.updateTask.bind(this);
@@ -34,20 +35,44 @@ class App extends React.Component {
       });
   }
 
-  addTask(i) {
+  addTask(e) {
+    e.preventDefault();
+    console.log(this.state.input, this.state.complete, "where we start");
     fetch("/api/todos", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ input: this.state.input })
-      // .then(res => res.json())
-      // body: JSON.stringify({ text: this.state.input, complete: 0 })
-    });
-    // Continue fetch request here
-    this.setState({
-      tasks: i
-    });
+      body: JSON.stringify({
+        text: this.state.input,
+        complete: this.state.complete
+      })
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log(data.insertId);
+        const newTask = [
+          {
+            id: data.insertId,
+            text: this.state.input,
+            complete: this.state.complete
+          }
+        ];
+
+        this.setState({
+          // currently tasks is an array [] full of tasks from before unless this is the first task.
+          // your new item that you are adding, should be an object like other objects that are already in tasks.
+          // { id: idfromdb, text : taskString, complete : 0or1} .. check the constructor.
+          // your new item should have the same format.
+
+          tasks: [...this.state.tasks, ...newTask]
+        });
+        console.log(this.state.tasks);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    //  Continue fetch request here
   }
 
   updateTask(i) {
@@ -83,7 +108,7 @@ class App extends React.Component {
         <ol>
           {this.state.tasks.map(k => {
             return (
-              <li key={k.toString()} onClick={e => this.updateTask(e)}>
+              <li key={k.id} onChange={e => this.updateTask(e)}>
                 {k.text}
               </li>
             );
