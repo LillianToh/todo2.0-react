@@ -3,6 +3,7 @@ const mysql = require("mysql");
 
 module.exports = async function db(query) {
   const results = {
+    //insertId: 0,
     data: [],
     error: null
   };
@@ -41,6 +42,7 @@ module.exports = async function db(query) {
             con.end();
             return;
           }
+          //results.insertId = result.insertId;
 
           // push the result (which should be an OkPacket) to data
           // germinal - removed next line because it returns an array in an array when empty set

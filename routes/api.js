@@ -21,22 +21,41 @@ router.get("/todos", (req, res) => {
 router.post("/todos", (req, res) => {
   // The request's body is available in req.body
   // If the query is successfull you should send back the full list of items
-  // Add your code here
-  //
+  //console.log(req.body)
+  const newText = req.body.text;
+  const newComplete = req.body.complete;
+  //db("INSERT INTO items(text,complete) VALUES('',0);")
+  db(
+    `INSERT INTO items(text,complete) VALUES(${JSON.stringify(
+      newText
+    )}, ${newComplete});`
+  )
+    .then(results => {
+      res.send(results.data);
+      res.status(200).send("item added in todo");
+    })
+    .catch(err => res.status(500).send(err));
 });
 
 router.put("/todos/:todo_id", (req, res) => {
   // The request's body is available in req.body
   // URL params are available in req.params
   // If the query is successfull you should send back the full list of items
-  // Add your code here
-  //
+  const newId = req.params["todo_id"];
+  const newText = req.body.text;
+  db(`UPDATE items SET text = ${JSON.stringify(newText)} WHERE id = ${newId};`)
+    .then(results => {
+      res.send(results.data);
+      console.log(results.data);
+      res.status(200).send("item is being updated");
+    })
+    .catch(err => res.status(500).send(err));
 });
 
 router.delete("/todos/:todo_id", (req, res) => {
   // URL params are available in req.params
-  // Add your code here
-  //
+  db("DELETE FROM items WHERE id = parseInt(req.params.id)");
+  return parseInt(e.id) !== parseInt(req.params.id);
 });
 
 module.exports = router;
