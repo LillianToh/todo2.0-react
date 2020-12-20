@@ -82,7 +82,7 @@ class App extends React.Component {
     // upon failure, show error message
 
     // Updates the requirements from the server side
-    fetch("api/todos/" + identity, {
+    fetch("/api/todos/" + identity, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json"
@@ -143,40 +143,62 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <h1>To Do List</h1>
-        <div>
-          <label>
-            New Task:
-            <input onChange={e => this.updateInput(e)} />
-          </label>
-          <button onClick={e => this.addTask(e)}>Submit</button>
+        <header>
+          <img src="https://www.logolynx.com/images/logolynx/2b/2b696958d35a839820ee22886375cf9f.jpeg"></img>
+          Just Do It. To Do List.
+        </header>
+
+        <div className="container center_div_form">
+          <form className="row g-3">
+            <div className="col-auto">
+              <h3>Add Task</h3>
+            </div>
+            <div className="col-auto">
+              <input
+                className="form-control"
+                onChange={e => this.updateInput(e)}
+              />
+            </div>
+            <div class="col-auto">
+              <button
+                className="btn btn-warning"
+                onClick={e => this.addTask(e)}
+              >
+                +
+              </button>
+            </div>
+          </form>
         </div>
 
-        <div>Number of Tasks Now: {this.state.tasks.length}</div>
+        <div className="container center_div_tasknumber">
+          <div className="badge rounded-pill bg-light text-dark">
+            Number of Tasks Left :
+            <span className="badge rounded-pill bg-warning text-dark">
+              {this.state.tasks.length}
+            </span>
+          </div>
+        </div>
 
-        {/* <ol>
-          {this.state.tasks.map(k => {
-            return (
-              <li key={k.id} onChange={e => this.updateTask(e)}>
-                {k.text}
-              </li>
-            );
-          })
-          }
-        </ol> */}
-
-        <div>
+        <div className="container center_div_tasklist">
           <div>
             {this.state.tasks.map(k => {
               return (
-                <div key={k.id}>
+                <div className="input-group input-group-sm mb-3" key={k.id}>
                   <input
                     type="text"
+                    className="form-control"
+                    aria-describedby="basic-addon1"
                     value={k.text}
                     id={k.id}
                     onChange={e => this.updateTask(e, k.id)}
                   />
-                  <button onClick={e => this.deleteTask(e, k.id)}>x</button>
+                  <div className="input-group-append">
+                    <button
+                      className="btn-close btn-close-white"
+                      aria-label="Close"
+                      onClick={e => this.deleteTask(e, k.id)}
+                    ></button>
+                  </div>
                 </div>
               );
             })}

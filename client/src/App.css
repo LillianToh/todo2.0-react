@@ -31,3 +31,37 @@
     transform: rotate(360deg);
   }
 }
+
+header {
+  background-color: white;
+}
+
+h3 {
+  color: white;
+}
+
+body {
+  background-color: black;
+  cursor: pointer;
+}
+
+.center_div_form {
+  margin: 0 auto;
+  padding-top: 20px;
+  width: 50%;
+}
+
+.center_div_tasknumber {
+  margin: 0 auto;
+  padding-top: 5px;
+  width: 2%;
+}
+
+.center_div_tasklist {
+  margin: 0 auto;
+  width: 30%;
+}
+
+.input-group {
+  padding-top: 10px;
+}
