@@ -26,7 +26,7 @@ class App extends React.Component {
       .then(res => res.json())
       .then(json => {
         // upon success, update tasks
-        console.log(json);
+        //console.log(json);
         this.setState({
           tasks: json
         });
@@ -38,7 +38,6 @@ class App extends React.Component {
 
   addTask(e) {
     e.preventDefault();
-    //console.log(this.state.input, this.state.complete, "where we start");
     fetch("/api/todos", {
       method: "POST",
       headers: {
@@ -49,25 +48,9 @@ class App extends React.Component {
         complete: this.state.complete
       })
     })
-      .then(res => res.json())
-      .then(data => {
-        console.log(data.insertId);
-        console.log(data);
-        const newTask = [
-          {
-            id: data.insertId,
-            text: this.state.input,
-            complete: this.state.complete
-          }
-        ];
-
-        this.setState({
-          // currently tasks is an array [] full of tasks from before unless this is the first task.
-          // your new item that you are adding, should be an object like other objects that are already in tasks.
-          // { id: idfromdb, text : taskString, complete : 0or1} .. check the constructor.
-          // your new item should have the same format.
-          tasks: [...this.state.tasks, ...newTask]
-        });
+      .then(res => {
+        res.json();
+        this.componentDidMount();
         console.log(this.state.tasks);
       })
       .catch(error => {
@@ -76,12 +59,6 @@ class App extends React.Component {
   }
 
   updateTask(e, identity) {
-    // update this.state.task.push(whateveryougetinjson)
-    // update task from database
-    // upon success, update tasks
-    // upon failure, show error message
-
-    // Updates the requirements from the server side
     fetch("/api/todos/" + identity, {
       method: "PUT",
       headers: {
@@ -92,53 +69,58 @@ class App extends React.Component {
         text: e.target.value,
         complete: this.state.complete
       })
-    }).then(() => {
-      fetch("/api/todos/")
-        .then(response => response.json())
-        .then(data => {
-          this.setState({
-            tasks: data
-          });
-        })
-        .catch(e => console.error(e));
-    });
-
-    // // Updating the data from the browser side not directly influenced by the server / fetch
-    // const tasksIndex = this.state.tasks.findIndex(t => t.id === identity);
-
-    // const changedTask = { ...this.state.tasks[tasksIndex] }; //points to the copy of the task that you are wanting to change
-    // changedTask.text = e.target.value;
-
-    // const changedTasks = [...this.state.tasks]; //create a copy of the task lists that is unchanged
-    // changedTasks[tasksIndex] = changedTask; //change happens here
-
-    // this.setState({
-    //   tasks: changedTasks
-    // });
-    // console.log(this.state.tasks);
+    })
+      .then(res => {
+        res.json();
+        this.componentDidMount();
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
+  // // Updating the data from the browser side not directly influenced by the server / fetch
+  // const tasksIndex = this.state.tasks.findIndex(t => t.id === identity);
+
+  // const changedTask = { ...this.state.tasks[tasksIndex] }; //points to the copy of the task that you are wanting to change
+  // changedTask.text = e.target.value;
+
+  // const changedTasks = [...this.state.tasks]; //create a copy of the task lists that is unchanged
+  // changedTasks[tasksIndex] = changedTask; //change happens here
+
+  // this.setState({
+  //   tasks: changedTasks
+  // });
+  // console.log(this.state.tasks);
 
   deleteTask(e, i) {
-    // delete task from database
-    // upon success, update tasks
-    // upon failure, show error message
     console.log(i);
     fetch("/api/todos/" + i, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json"
       }
-    }).then(() => {
-      fetch("/api/todos/")
-        .then(response => response.json())
-        .then(data => {
-          this.setState({
-            tasks: data
-          });
-        })
-        .catch(e => console.error(e));
-    });
+    })
+      .then(res => {
+        res.json();
+        this.componentDidMount();
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
+
+  //original code from line 104 (using double fetch)
+  //   .then(() => {
+  //     fetch("/api/todos/")
+  //       .then(response => response.json())
+  //       .then(data => {
+  //         this.setState({
+  //           tasks: data
+  //         });
+  //       })
+  //       .catch(e => console.error(e));
+  //   });
+  // }
 
   render() {
     return (
@@ -188,8 +170,7 @@ class App extends React.Component {
                     type="text"
                     className="form-control"
                     aria-describedby="basic-addon1"
-                    value={k.text}
-                    //better to use defaultValue={k.text}
+                    defaultValue={k.text}
                     id={k.id}
                     onChange={e => this.updateTask(e, k.id)}
                   />
