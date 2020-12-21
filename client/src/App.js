@@ -189,6 +189,7 @@ class App extends React.Component {
                     className="form-control"
                     aria-describedby="basic-addon1"
                     value={k.text}
+                    //better to use defaultValue={k.text}
                     id={k.id}
                     onChange={e => this.updateTask(e, k.id)}
                   />
